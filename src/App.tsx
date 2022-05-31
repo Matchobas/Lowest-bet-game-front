@@ -7,19 +7,29 @@ interface Bet {
   value: number;
 }
 
+interface Timer {
+  hours: string;
+  minutes: string;
+  seconds: string;
+}
+
 export function App() {
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const [remainDate, setRemainDate] = useState<Date>(new Date());
+  const [remainDate, setRemainDate] = useState<Timer | null>(null);
   const [betValue, setBetValue] = useState<number>();
   const [auctionBets, setAuctionBets] = useState<Bet[]>([]);
   const [winner, setWinner] = useState<number | null>(null);
 
-  function countdown(date: Date): string {
-    const timer = date.toLocaleString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    });
+  function countdown(date: Timer): string {
+    // const timer = date.toLocaleString("en-GB", {
+    //   hour: "2-digit",
+    //   minute: "2-digit",
+    //   second: "2-digit"
+    // });
+
+    if (date.seconds.split('').length != 2) date.seconds = ['0',date.seconds].join('');
+    if (date.minutes.split('').length != 2) date.minutes = ['0',date.minutes].join('');
+    const timer = [date.hours, date.minutes, date.seconds].join(':');
 
     return timer;
   }
@@ -29,7 +39,7 @@ export function App() {
 
     try {
       api.post('bets', {
-        auctionId: '9cc788f6-7c0f-4dc1-807a-24c8851fbc7a',
+        auctionId: '961b22d6-91e8-44b0-ab14-07b6363f251b',
         value: betValue,
         username: 'Jeff',
       }).then((response) => {
@@ -48,11 +58,12 @@ export function App() {
       const endTime = endDate.getTime();
       const remainingTime = new Date(endTime - new Date().getTime());
 
-      console.log('Data de termino: ' + endDate);
-      console.log('Data de início: ' + remainingTime);
+      const hours = String(remainingTime.getHours());
+      const minutes = String(remainingTime.getMinutes());
+      const seconds = String(remainingTime.getSeconds());
 
-      setRemainDate(remainingTime);
-    }, 1000000);
+      setRemainDate({hours, minutes, seconds});
+    }, 1010);
 
     console.log(remainDate);
 
@@ -60,7 +71,7 @@ export function App() {
 
   // Getting an active auction
   useEffect(() => {
-    api.get(`auction/9cc788f6-7c0f-4dc1-807a-24c8851fbc7a`)
+    api.get(`auction/961b22d6-91e8-44b0-ab14-07b6363f251b`)
     .then((response) => {
       const date = new Date(response.data.end_time);
       setEndDate(date);
@@ -68,8 +79,9 @@ export function App() {
     })
   }, []);
 
+
   useEffect(() => {
-    api.get('bets/winner/9cc788f6-7c0f-4dc1-807a-24c8851fbc7a')
+    api.get('bets/winner/961b22d6-91e8-44b0-ab14-07b6363f251b')
     .then((response) => {
       setWinner(response.data.winnerBet.value);
     });
@@ -77,7 +89,7 @@ export function App() {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center">
-      <h2 className="text-white text-7xl p-4">{countdown(remainDate)}</h2>
+      <h2 className="text-white text-7xl p-4">{remainDate && countdown(remainDate)}</h2>
       <img src={suitcaseImg} />
       <form className="py-6" onSubmit={(event) => handleBetForm(event)}>
         <input
