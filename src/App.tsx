@@ -7,31 +7,38 @@ interface Bet {
   value: number;
 }
 
-interface Timer {
-  hours: string;
-  minutes: string;
-  seconds: string;
-}
-
 export function App() {
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const [remainDate, setRemainDate] = useState<Timer | null>(null);
+  const [remainDate, setRemainDate] = useState<number | null>(null);
   const [betValue, setBetValue] = useState<number>();
   const [auctionBets, setAuctionBets] = useState<Bet[]>([]);
   const [winner, setWinner] = useState<number | null>(null);
 
-  function countdown(date: Timer): string {
-    // const timer = date.toLocaleString("en-GB", {
-    //   hour: "2-digit",
-    //   minute: "2-digit",
-    //   second: "2-digit"
-    // });
+  // function countdown(date: Timer): string {
+  //   // const timer = date.toLocaleString("en-GB", {
+  //   //   hour: "2-digit",
+  //   //   minute: "2-digit",
+  //   //   second: "2-digit"
+  //   // });
 
-    if (date.seconds.split('').length != 2) date.seconds = ['0',date.seconds].join('');
-    if (date.minutes.split('').length != 2) date.minutes = ['0',date.minutes].join('');
-    const timer = [date.hours, date.minutes, date.seconds].join(':');
+  //   if (date.seconds.split('').length != 2) date.seconds = ['0',date.seconds].join('');
+  //   if (date.minutes.split('').length != 2) date.minutes = ['0',date.minutes].join('');
+  //   const timer = [date.hours, date.minutes, date.seconds].join(':');
 
-    return timer;
+  //   return timer;
+  // }
+
+  function countdown(duration: number) {
+    const seconds = Math.floor((duration / 1000) % 60);
+    const minutes = Math.floor((duration / (1000 * 60)) % 60);
+    const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+    const days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 30);
+  
+    const sHours = (hours < 10) ? "0" + hours : hours;
+    const sMinutes = (minutes < 10) ? "0" + minutes : minutes;
+    const sSeconds = (seconds < 10) ? "0" + seconds : seconds;
+  
+    return String(days) + ":" + sHours + ":" + sMinutes + ":" + sSeconds;
   }
 
   function handleBetForm(event: FormEvent) {
@@ -56,13 +63,9 @@ export function App() {
   useEffect(() => {
     setInterval(() => {
       const endTime = endDate.getTime();
-      const remainingTime = new Date(endTime - new Date().getTime());
+      const remainingTime = endTime - new Date().getTime();
 
-      const hours = String(remainingTime.getHours());
-      const minutes = String(remainingTime.getMinutes());
-      const seconds = String(remainingTime.getSeconds());
-
-      setRemainDate({hours, minutes, seconds});
+      setRemainDate(remainingTime);
     }, 1010);
 
     console.log(remainDate);
