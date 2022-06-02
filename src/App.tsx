@@ -64,19 +64,6 @@ export function App() {
     setBetValue(props.target.valueAsNumber)
   }
 
-  // Changing the time date to create the countdown timer
-  useEffect(() => {
-    setInterval(() => {
-      const endTime = endDate.getTime();
-      const remainingTime = endTime - new Date().getTime();
-
-      setRemainDate(remainingTime);
-    }, 1010);
-
-    console.log(remainDate);
-
-  }, [remainDate, endDate]);
-
   // Getting an active auction
   useEffect(() => {
     api.get(`auction/961b22d6-91e8-44b0-ab14-07b6363f251b`)
@@ -87,6 +74,16 @@ export function App() {
     })
   }, []);
 
+    // Changing the time date to create the countdown timer
+    useEffect(() => {
+      setTimeout(() => {
+        const endTime = endDate.getTime();
+        const remainingTime = endTime - new Date().getTime();
+  
+        remainingTime > 0 ? setRemainDate(remainingTime) : setRemainDate(null);
+      }, 1000);
+  
+    }, [remainDate, endDate]);
 
   useEffect(() => {
     api.get('bets/winner/961b22d6-91e8-44b0-ab14-07b6363f251b')
