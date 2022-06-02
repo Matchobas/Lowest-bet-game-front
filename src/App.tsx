@@ -1,6 +1,7 @@
 import suitcaseImg from './assets/suitcaseMoney.jpeg';
 import { api } from './api';
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, InputHTMLAttributes, useEffect, useState } from 'react';
+import { BetForm } from './components/BetForm';
 
 interface Bet {
   id: string;
@@ -38,7 +39,7 @@ export function App() {
     const sMinutes = (minutes < 10) ? "0" + minutes : minutes;
     const sSeconds = (seconds < 10) ? "0" + seconds : seconds;
   
-    return String(days) + ":" + sHours + ":" + sMinutes + ":" + sSeconds;
+    return String(days) + "d:" + sHours + ":" + sMinutes + ":" + sSeconds;
   }
 
   function handleBetForm(event: FormEvent) {
@@ -57,6 +58,10 @@ export function App() {
     } catch (err: any) {
       console.log(err.message);
     }
+  }
+
+  function changeBetValue(props: ChangeEvent<HTMLInputElement>) {
+    setBetValue(props.target.valueAsNumber)
   }
 
   // Changing the time date to create the countdown timer
@@ -94,23 +99,7 @@ export function App() {
     <div className="h-screen flex flex-col items-center justify-center text-center">
       <h2 className="text-white text-7xl p-4">{remainDate && countdown(remainDate)}</h2>
       <img src={suitcaseImg} />
-      <form className="py-6" onSubmit={(event) => handleBetForm(event)}>
-        <input
-          onChange={(props) => {
-            setBetValue(props.target.valueAsNumber);
-          }}
-          className="rounded-l h-8 p-2 text-purple-900" 
-          type="number" 
-          placeholder="Type your bet here"
-        ></input>
-        <button
-          type="submit" 
-          className="px-4 h-8 bg-purple-700 text-white rounded-r hover:bg-purple-600 hover:transition-colors"
-          disabled={!betValue}
-        >
-          Enviar
-        </button>
-      </form>
+      <BetForm betValue={betValue} changeBetValue={changeBetValue} handleBetForm={handleBetForm} />
       
       <div className="flex">
         {auctionBets.map((bet) => {
