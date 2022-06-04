@@ -6,3 +6,10 @@ The front-end is made using ReactJS, to run it you need node installed in your m
 ```
 yarn
 ```
+
+With the dependencies installed, you can run the application running the following command in your terminal:
+```
+yarn dev
+```
+
+Then, access the web application in your browser in http://localhost:3000
