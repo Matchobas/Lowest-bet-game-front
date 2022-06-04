@@ -2,6 +2,7 @@ import suitcaseImg from './assets/suitcaseMoney.jpeg';
 import { api } from './api';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { BetForm } from './components/BetForm';
+import { Timer } from './components/Timer';
 
 interface Bet {
   id: string;
@@ -18,19 +19,6 @@ export function App() {
 
   const [auctionId, setAuctionId] = useState('');
   const [reload, setReload] = useState(false);
-
-  function countdown(duration: number) {
-    const seconds = Math.floor((duration / 1000) % 60);
-    const minutes = Math.floor((duration / (1000 * 60)) % 60);
-    const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-    const days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 120);
-  
-    const sHours = (hours < 10) ? "0" + hours : hours;
-    const sMinutes = (minutes < 10) ? "0" + minutes : minutes;
-    const sSeconds = (seconds < 10) ? "0" + seconds : seconds;
-  
-    return String(days) + "d:" + sHours + ":" + sMinutes + ":" + sSeconds;
-  }
 
   function handleBetForm(event: FormEvent) {
     event.preventDefault();
@@ -101,7 +89,7 @@ export function App() {
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center">
       
-      <h2 className="text-white text-7xl p-4">{remainDate && countdown(remainDate)}</h2>
+      <Timer remainDate={remainDate} />
       <p className="text-gray-100 font-bold text-3xl p-2">{auctionItem}</p>
       <img src={suitcaseImg} />
       <BetForm betValue={betValue} changeBetValue={changeBetValue} handleBetForm={handleBetForm} />
